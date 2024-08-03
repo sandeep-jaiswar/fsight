@@ -1,0 +1,215 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Stock {
+  id                  Int                    @id @default(autoincrement())
+  symbol              String                 @unique
+  name                String
+  description         String?
+  stockPrices         StockPrice[]
+  stockDividends      StockDividend[]
+  stockSplits         StockSplit[]
+  stockEarnings       StockEarnings[]
+  stockMetadata       StockMetadata[]
+  stockSectors        StockSector[]
+  financialStatements FinancialStatement[]
+  stockNews           StockNews[]
+  stockEvents         StockEvent[]
+  insiderTransactions InsiderTransaction[]
+  analystRatings      AnalystRating[]
+  socialSentiments    SocialSentiment[]
+  peers               StockPeer[]            @relation("StockPeers")
+  peerOf              StockPeer[]            @relation("PeerStocks")
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+}
+
+model StockPrice {
+  id        Int       @id @default(autoincrement())
+  stockId   Int
+  date      DateTime
+  open      Float
+  high      Float
+  low       Float
+  close     Float
+  volume    Int
+  stock     Stock     @relation(fields: [stockId], references: [id])
+}
+
+model StockDividend {
+  id        Int       @id @default(autoincrement())
+  stockId   Int
+  date      DateTime
+  amount    Float
+  stock     Stock     @relation(fields: [stockId], references: [id])
+}
+
+model StockSplit {
+  id           Int       @id @default(autoincrement())
+  stockId      Int
+  date         DateTime
+  ratio        Float
+  stock        Stock     @relation(fields: [stockId], references: [id])
+}
+
+model StockEarnings {
+  id            Int       @id @default(autoincrement())
+  stockId       Int
+  date          DateTime
+  revenue       Float
+  netIncome     Float
+  earningsPerShare Float
+  stock         Stock     @relation(fields: [stockId], references: [id])
+}
+
+model StockMetadata {
+  id              Int       @id @default(autoincrement())
+  stockId         Int
+  marketCap       Float?
+  peRatio         Float?
+  beta            Float?
+  stock           Stock     @relation(fields: [stockId], references: [id])
+}
+
+model FinancialStatement {
+  id                 Int                  @id @default(autoincrement())
+  stockId            Int
+  statementType      StatementType
+  periodEnding       DateTime
+  balanceSheets      BalanceSheet[]
+  incomeStatements   IncomeStatement[]
+  cashFlowStatements CashFlowStatement[]
+  stock              Stock                @relation(fields: [stockId], references: [id])
+}
+
+model BalanceSheet {
+  id                   Int                @id @default(autoincrement())
+  financialStatementId Int
+  totalAssets          Float
+  totalLiabilities     Float
+  totalEquity          Float
+  financialStatement   FinancialStatement @relation(fields: [financialStatementId], references: [id])
+}
+
+model IncomeStatement {
+  id                   Int                @id @default(autoincrement())
+  financialStatementId Int
+  revenue              Float
+  grossProfit          Float
+  operatingIncome      Float
+  netIncome            Float
+  financialStatement   FinancialStatement @relation(fields: [financialStatementId], references: [id])
+}
+
+model CashFlowStatement {
+  id                   Int                @id @default(autoincrement())
+  financialStatementId Int
+  operatingCashFlow    Float
+  investingCashFlow    Float
+  financingCashFlow    Float
+  netCashFlow          Float
+  financialStatement   FinancialStatement @relation(fields: [financialStatementId], references: [id])
+}
+
+model StockNews {
+  id        Int       @id @default(autoincrement())
+  stockId   Int
+  date      DateTime
+  headline  String
+  content   String
+  source    String
+  stock     Stock     @relation(fields: [stockId], references: [id])
+}
+
+model StockEvent {
+  id          Int       @id @default(autoincrement())
+  stockId     Int
+  date        DateTime
+  title       String
+  description String
+  stock       Stock     @relation(fields: [stockId], references: [id])
+}
+
+model InsiderTransaction {
+  id              Int             @id @default(autoincrement())
+  stockId         Int
+  insiderName     String
+  date            DateTime
+  transactionType TransactionType
+  shares          Int
+  price           Float
+  stock           Stock           @relation(fields: [stockId], references: [id])
+}
+
+model AnalystRating {
+  id          Int         @id @default(autoincrement())
+  stockId     Int
+  date        DateTime
+  analyst     String
+  rating      RatingType
+  priceTarget Float?
+  stock       Stock       @relation(fields: [stockId], references: [id])
+}
+
+model SocialSentiment {
+  id        Int           @id @default(autoincrement())
+  stockId   Int
+  date      DateTime
+  source    String
+  sentiment SentimentType
+  score     Float
+  stock     Stock         @relation(fields: [stockId], references: [id])
+}
+
+model StockPeer {
+  id          Int       @id @default(autoincrement())
+  stockId     Int
+  peerStockId Int
+  stock       Stock     @relation("StockPeers", fields: [stockId], references: [id])
+  peerStock   Stock     @relation("PeerStocks", fields: [peerStockId], references: [id])
+}
+
+model Sector {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  stocks    StockSector[]
+}
+
+model StockSector {
+  id        Int       @id @default(autoincrement())
+  stockId   Int
+  sectorId  Int
+  stock     Stock     @relation(fields: [stockId], references: [id])
+  sector    Sector    @relation(fields: [sectorId], references: [id])
+}
+
+enum StatementType {
+  BALANCE_SHEET
+  INCOME_STATEMENT
+  CASH_FLOW_STATEMENT
+}
+
+enum TransactionType {
+  BUY
+  SELL
+}
+
+enum RatingType {
+  STRONG_BUY
+  BUY
+  HOLD
+  SELL
+  STRONG_SELL
+}
+
+enum SentimentType {
+  POSITIVE
+  NEUTRAL
+  NEGATIVE
+}
