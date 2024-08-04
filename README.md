@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Sector
 
-## Getting Started
+Insert sectors first as they are independent and will be referenced by the StockSector table.
+Stock
 
-First, run the development server:
+Insert stock data next since other tables will reference this table.
+StockSector
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Insert relationships between stocks and sectors after both Stock and Sector have data.
+FinancialStatement
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Insert financial statements data since they relate to the Stock table.
+BalanceSheet
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Insert balance sheets, as they are related to FinancialStatement.
+IncomeStatement
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Insert income statements, which are also related to FinancialStatement.
+CashFlowStatement
 
-## Learn More
+Insert cash flow statements, which are related to FinancialStatement.
+StockPrice
 
-To learn more about Next.js, take a look at the following resources:
+Insert historical price data, as it relies on the Stock table.
+StockDividend
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Insert dividend data after Stock is populated.
+StockSplit
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Insert stock split data, which also depends on Stock.
+StockEarnings
 
-## Deploy on Vercel
+Insert earnings reports after Stock is populated.
+StockMetadata
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Insert metadata related to each stock.
+StockNews
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Insert news articles related to stocks.
+StockEvent
+
+Insert significant events related to stocks.
+InsiderTransaction
+
+Insert transactions by company insiders.
+AnalystRating
+
+Insert analyst ratings and recommendations.
+SocialSentiment
+
+Insert social sentiment data.
+StockPeer
+
+Insert relationships between stocks and their peers after the Stock table is populated.
