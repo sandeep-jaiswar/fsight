@@ -7,9 +7,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String    @default(uuid())
+  name      String
+  email     String    @id @unique
+  image     String?
+  accounts  Account[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Account {
+  id                       Int     @id @default(autoincrement())
+  email                    String
+  provider                 String
+  providerAccountId        String
+  type                     String
+  access_token             String  @db.Text
+  expires_in               Int?
+  refresh_token            String? @db.Text
+  refresh_token_expires_in Int?
+  token_type               String?
+  scope                    String?
+  expires_at               Int?
+  user                     User    @relation(fields: [email], references: [email])
+
+  @@unique([provider, providerAccountId])
+}
+
 model Stock {
-  id                  Int                    @id @default(autoincrement())
-  symbol              String                 @unique
+  id                  Int                  @id @default(autoincrement())
+  symbol              String               @unique
   name                String
   description         String?
   stockPrices         StockPrice[]
@@ -24,68 +52,68 @@ model Stock {
   insiderTransactions InsiderTransaction[]
   analystRatings      AnalystRating[]
   socialSentiments    SocialSentiment[]
-  peers               StockPeer[]            @relation("StockPeers")
-  peerOf              StockPeer[]            @relation("PeerStocks")
-  createdAt           DateTime               @default(now())
-  updatedAt           DateTime               @updatedAt
+  peers               StockPeer[]          @relation("StockPeers")
+  peerOf              StockPeer[]          @relation("PeerStocks")
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
 }
 
 model StockPrice {
-  id        Int       @id @default(autoincrement())
-  stockId   Int
-  date      DateTime
-  open      Float
-  high      Float
-  low       Float
-  close     Float
-  volume    Int
-  stock     Stock     @relation(fields: [stockId], references: [id])
+  id      Int      @id @default(autoincrement())
+  stockId Int
+  date    DateTime
+  open    Float
+  high    Float
+  low     Float
+  close   Float
+  volume  Int
+  stock   Stock    @relation(fields: [stockId], references: [id])
 }
 
 model StockDividend {
-  id        Int       @id @default(autoincrement())
-  stockId   Int
-  date      DateTime
-  amount    Float
-  stock     Stock     @relation(fields: [stockId], references: [id])
+  id      Int      @id @default(autoincrement())
+  stockId Int
+  date    DateTime
+  amount  Float
+  stock   Stock    @relation(fields: [stockId], references: [id])
 }
 
 model StockSplit {
-  id           Int       @id @default(autoincrement())
-  stockId      Int
-  date         DateTime
-  ratio        Float
-  stock        Stock     @relation(fields: [stockId], references: [id])
+  id      Int      @id @default(autoincrement())
+  stockId Int
+  date    DateTime
+  ratio   Float
+  stock   Stock    @relation(fields: [stockId], references: [id])
 }
 
 model StockEarnings {
-  id            Int       @id @default(autoincrement())
-  stockId       Int
-  date          DateTime
-  revenue       Float
-  netIncome     Float
+  id               Int      @id @default(autoincrement())
+  stockId          Int
+  date             DateTime
+  revenue          Float
+  netIncome        Float
   earningsPerShare Float
-  stock         Stock     @relation(fields: [stockId], references: [id])
+  stock            Stock    @relation(fields: [stockId], references: [id])
 }
 
 model StockMetadata {
-  id              Int       @id @default(autoincrement())
-  stockId         Int
-  marketCap       Float?
-  peRatio         Float?
-  beta            Float?
-  stock           Stock     @relation(fields: [stockId], references: [id])
+  id        Int    @id @default(autoincrement())
+  stockId   Int
+  marketCap Float?
+  peRatio   Float?
+  beta      Float?
+  stock     Stock  @relation(fields: [stockId], references: [id])
 }
 
 model FinancialStatement {
-  id                 Int                  @id @default(autoincrement())
+  id                 Int                 @id @default(autoincrement())
   stockId            Int
   statementType      StatementType
   periodEnding       DateTime
   balanceSheets      BalanceSheet[]
   incomeStatements   IncomeStatement[]
   cashFlowStatements CashFlowStatement[]
-  stock              Stock                @relation(fields: [stockId], references: [id])
+  stock              Stock               @relation(fields: [stockId], references: [id])
 }
 
 model BalanceSheet {
@@ -118,22 +146,22 @@ model CashFlowStatement {
 }
 
 model StockNews {
-  id        Int       @id @default(autoincrement())
-  stockId   Int
-  date      DateTime
-  headline  String
-  content   String
-  source    String
-  stock     Stock     @relation(fields: [stockId], references: [id])
+  id       Int      @id @default(autoincrement())
+  stockId  Int
+  date     DateTime
+  headline String
+  content  String
+  source   String
+  stock    Stock    @relation(fields: [stockId], references: [id])
 }
 
 model StockEvent {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   stockId     Int
   date        DateTime
   title       String
   description String
-  stock       Stock     @relation(fields: [stockId], references: [id])
+  stock       Stock    @relation(fields: [stockId], references: [id])
 }
 
 model InsiderTransaction {
@@ -148,13 +176,13 @@ model InsiderTransaction {
 }
 
 model AnalystRating {
-  id          Int         @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   stockId     Int
   date        DateTime
   analyst     String
   rating      RatingType
   priceTarget Float?
-  stock       Stock       @relation(fields: [stockId], references: [id])
+  stock       Stock      @relation(fields: [stockId], references: [id])
 }
 
 model SocialSentiment {
@@ -168,25 +196,25 @@ model SocialSentiment {
 }
 
 model StockPeer {
-  id          Int       @id @default(autoincrement())
+  id          Int   @id @default(autoincrement())
   stockId     Int
   peerStockId Int
-  stock       Stock     @relation("StockPeers", fields: [stockId], references: [id])
-  peerStock   Stock     @relation("PeerStocks", fields: [peerStockId], references: [id])
+  stock       Stock @relation("StockPeers", fields: [stockId], references: [id])
+  peerStock   Stock @relation("PeerStocks", fields: [peerStockId], references: [id])
 }
 
 model Sector {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  stocks    StockSector[]
+  id     Int           @id @default(autoincrement())
+  name   String        @unique
+  stocks StockSector[]
 }
 
 model StockSector {
-  id        Int       @id @default(autoincrement())
-  stockId   Int
-  sectorId  Int
-  stock     Stock     @relation(fields: [stockId], references: [id])
-  sector    Sector    @relation(fields: [sectorId], references: [id])
+  id       Int    @id @default(autoincrement())
+  stockId  Int
+  sectorId Int
+  stock    Stock  @relation(fields: [stockId], references: [id])
+  sector   Sector @relation(fields: [sectorId], references: [id])
 }
 
 enum StatementType {
