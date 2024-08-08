@@ -11,6 +11,8 @@
   "dependencies": {
     "@prisma/client": "^5.17.0",
     "@types/jsdom": "^21.1.7",
+    "ag-grid-community": "^32.1.0",
+    "ag-grid-react": "^32.1.0",
     "axios": "^1.7.3",
     "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.4.5",

@@ -1,6 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import 'ag-grid-community/styles/ag-grid.css';
+@import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 @layer utilities {
   .loader {
@@ -15,4 +17,14 @@
       background-position: right -30px top 0;
     }
   }
+}
+
+.logo-text {
+  font-weight: bold;
+  font-size: 60px;
+  fill: #c8102e;
+}
+.logo-text-span {
+  font-size: 70px;
+   letter-spacing: -15px;
 }

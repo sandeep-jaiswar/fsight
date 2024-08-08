@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import SessionWrapper from "@/components/SessionWrapper";
 import { auth } from "@/lib/auth";
-
 import "./globals.css";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,7 +22,7 @@ const RootLayout = async ({
     <>
       <html lang="en">
         <body className={`${inter.className} bg-gray-100 min-h-screen`}>
-          <div className="container mx-auto p-4">
+          <div className="container">
             <SessionWrapper session={session}>{children}</SessionWrapper>
           </div>
         </body>
